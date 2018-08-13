@@ -5,6 +5,12 @@ buildscript {
     repositories {
         google()
         jcenter()
+        mavenCentral()
+
+        maven { url "https://jitpack.io" }
+        maven {
+            url 'https://maven.fabric.io/public'
+        }
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:3.2.0-alpha17'
@@ -19,9 +25,18 @@ allprojects {
     repositories {
         google()
         jcenter()
+        mavenCentral()
+
+        maven { url "https://jitpack.io" }
+        maven {
+            url 'https://maven.google.com/'
+        }
     }
 }
-
+ext {
+    roomVersion = '1.0.0'
+    archLifecycleVersion = '1.1.1'
+}
 task clean(type: Delete) {
     delete rootProject.buildDir
 }
