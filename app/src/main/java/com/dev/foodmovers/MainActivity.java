@@ -1,5 +1,7 @@
 package com.dev.foodmovers;
 
+import android.app.SearchManager;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -9,16 +11,16 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
-import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigation;
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigationItem;
-import com.daimajia.androidanimations.library.Techniques;
-import com.daimajia.androidanimations.library.YoYo;
 import com.dev.foodmovers.Data.PrefManager;
 import com.dev.foodmovers.Kogi.Badge.BadgeView;
 import com.dev.foodmovers.Views.Fragments.FragmentCompleted;
@@ -40,6 +42,8 @@ public class MainActivity extends AppCompatActivity {
     private BadgeView qBadgeView;
     private LinearLayout linearPay;
     private PrefManager prefManager;
+    SearchView mSearchView;
+
 
     private void setUpDrawer(Toolbar toolbar) {
 
@@ -105,6 +109,38 @@ public class MainActivity extends AppCompatActivity {
 
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+
+        MenuItem mSearch = menu.findItem(R.id.action_search);
+        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+
+        mSearchView = (SearchView) mSearch.getActionView();
+        mSearchView.setVisibility(View.GONE);
+        mSearchView.setIconifiedByDefault(false);
+        mSearchView.setQueryHint("Search here");
+        mSearchView.setSearchableInfo(searchManager != null ? searchManager.getSearchableInfo(getComponentName()) : null);
+
+        SearchView.SearchAutoComplete searchAutoComplete = mSearchView.findViewById(android.support.v7.appcompat.R.id.search_src_text);
+        searchAutoComplete.setHintTextColor(Color.BLACK);
+        searchAutoComplete.setTextColor(Color.BLACK);
+        mSearchView.setBackgroundColor(this.getResources().getColor(R.color.transparent));
+
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
@@ -130,19 +166,19 @@ public class MainActivity extends AppCompatActivity {
         collapsingToolbarLayout.setExpandedTitleColor(getResources().getColor(android.R.color.transparent));
         collapsingToolbarLayout.setContentScrimColor(getResources().getColor(R.color.colorPrimary));
         collapsingToolbarLayout.setStatusBarScrimColor(getResources().getColor(R.color.colorPrimary));
-        linearPay = findViewById(R.id.linear_pay);
+        //linearPay = findViewById(R.id.linear_pay);
 
 
         fragment = new FragmentProducts();
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction().replace(R.id.frame_layout, fragment, "fragmentMain").commit();
-
-        imagePay = findViewById(R.id.image);
-        YoYo.with(Techniques.BounceInDown)
-                .duration(100).repeatMode(YoYo.INFINITE)
-                .interpolate(new AccelerateDecelerateInterpolator())
-
-                .playOn(imagePay);
+//
+//        imagePay = findViewById(R.id.image);
+//        YoYo.with(Techniques.BounceInDown)
+//                .duration(100).repeatMode(YoYo.INFINITE)
+//                .interpolate(new AccelerateDecelerateInterpolator())
+//
+//                .playOn(imagePay);
 
         Intent i = getIntent();
         try {
@@ -162,9 +198,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    public void setImagePayVisibility(int visibility) {
-        imagePay.setVisibility(visibility);
-        linearPay.setVisibility(visibility);
+    public void setSearchVisibility(int visibility) {
+//        imagePay.setVisibility(visibility);
+//        linearPay.setVisibility(visibility);
 
 //
 //        YoYo.with(Techniques.BounceInDown)
@@ -177,63 +213,66 @@ public class MainActivity extends AppCompatActivity {
 //                .playOn(imagePay);
 
 
-        YoYo.with(Techniques.BounceInDown)
-                .duration(700).repeat(2)
-                .interpolate(new AccelerateDecelerateInterpolator())
-
-                .playOn(imagePay);
+//        YoYo.with(Techniques.BounceInDown)
+//                .duration(700).repeat(2)
+//                .interpolate(new AccelerateDecelerateInterpolator())
+//
+//                .playOn(imagePay);
 //        YoYo.with(Techniques.Tada)
 //                .duration(700)
 //                .repeat(5)
 //                .playOn(findViewById(R.id.txt_pay));
 
+        if (mSearchView != null) {
+            mSearchView.setVisibility(visibility);
+        }
 
     }
 
     public void setImagePayVisibility(int visibility, int resource) {
-        imagePay.setVisibility(visibility);
-
-        linearPay.setVisibility(visibility);
-
-
-//        imagePay.setImageResource(resource);
-//        RotateAnimation anim = new RotateAnimation(0f, 350f, 15f, 15f);
-//        anim.setInterpolator(new LinearInterpolator());
-//        anim.setRepeatCount(Animation.INFINITE);
-//        anim.setDuration(700);
-        if (visibility == View.VISIBLE) {
-
-
-// Start animating the image
-            // final ImageView splash = (ImageView) findViewById(R.id.splash);
-            // imagePay.startAnimation(anim);
-
-
-// Later.. stop the animation
-            //imagePay.setAnimation(null);
-
-        } else {
-            // imagePay.startAnimation(anim);
-
-        }
+//        imagePay.setVisibility(visibility);
+//
+//        linearPay.setVisibility(visibility);
+//
+//
+////        imagePay.setImageResource(resource);
+////        RotateAnimation anim = new RotateAnimation(0f, 350f, 15f, 15f);
+////        anim.setInterpolator(new LinearInterpolator());
+////        anim.setRepeatCount(Animation.INFINITE);
+////        anim.setDuration(700);
+//        if (visibility == View.VISIBLE) {
+//
+//
+//// Start animating the image
+//            // final ImageView splash = (ImageView) findViewById(R.id.splash);
+//            // imagePay.startAnimation(anim);
+//
+//
+//// Later.. stop the animation
+//            //imagePay.setAnimation(null);
+//
+//        } else {
+//            // imagePay.startAnimation(anim);
+//
+//        }
 
     }
 
     public void setImagePayBadge(String badge) {
-        if (qBadgeView != null) {
-
-
-            YoYo.with(Techniques.BounceInDown)
-                    .duration(700).repeatMode(YoYo.INFINITE)
-                    .interpolate(new AccelerateDecelerateInterpolator())
-
-                    .playOn(imagePay);
-//            YoYo.with(Techniques.Tada)
-//                    .duration(700)
-//                    .repeat(5)
+//        if (qBadgeView != null) {
+//
+//
+//            YoYo.with(Techniques.BounceInDown)
+//                    .duration(700).repeatMode(YoYo.INFINITE)
+//                    .interpolate(new AccelerateDecelerateInterpolator())
+//
 //                    .playOn(imagePay);
-            qBadgeView.bindTarget(imagePay).setBadgeText(badge);
-        }
+////            YoYo.with(Techniques.Tada)
+////                    .duration(700)
+////                    .repeat(5)
+////                    .playOn(imagePay);
+//            qBadgeView.bindTarget(imagePay).setBadgeText(badge);
+//        }
     }
 
 

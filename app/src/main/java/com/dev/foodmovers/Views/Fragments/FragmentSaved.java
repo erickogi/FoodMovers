@@ -52,7 +52,7 @@ public class FragmentSaved extends Fragment {
         }
 
         try {
-            ((MainActivity) getActivity()).setImagePayVisibility(View.VISIBLE);
+            ((MainActivity) getActivity()).setSearchVisibility(View.GONE);
 
         } catch (Exception nm) {
             nm.printStackTrace();

@@ -34,7 +34,7 @@ public class FragmentProducts extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         try {
-            ((MainActivity) Objects.requireNonNull(getActivity())).setImagePayVisibility(View.GONE);
+            ((MainActivity) Objects.requireNonNull(getActivity())).setSearchVisibility(View.VISIBLE);
         } catch (Exception nm) {
             nm.printStackTrace();
         }
