@@ -57,40 +57,62 @@ public class FoodRepo {
                         }
                     }
             );
-        }
-
-        //} else {
+            return null;
+        } else {
         return daao.fetchAllData();
-        //}
+        }
     }
 
 
-    public void insert(List<FoodModel> cyclesModel) {
-        cyclesDao = db.cyclesDao();
+    public void insert(List<FoodModel> foodModels) {
+        daao = db.foodDao();
 
-        new insertUnitsAsyncTask(cyclesDao).execute(cyclesModel);
+        new insertAsyncTask(daao).execute(foodModels);
     }
 
-    public LiveData<FoodModel> getCycleByKeyID(int key) {
-        return db.cyclesDao().getCycleByKeyID(key);
+    public LiveData<FoodModel> getLastFood() {
+        return db.foodDao().getLastFood();
     }
 
-    public LiveData<FoodModel> getCycleByKeyCode(String code, boolean b) {
-        return db.cyclesDao().getCycleByKeyCode(code);
+    public LiveData<List<FoodModel>> searchByName(String name) {
+        return db.foodDao().searchbyName(name);
 
     }
 
-    private static class insertUnitsAsyncTask extends AsyncTask<List<FoodModel>, Void, Boolean> {
+    private static class insertAsyncTask extends AsyncTask<List<FoodModel>, Void, Boolean> {
 
-        private FoodModelDao mAsyncTaskDao;
+        private FoodDao mAsyncTaskDao;
 
-        insertUnitsAsyncTask(FoodModelDao dao) {
+        insertAsyncTask(FoodDao dao) {
             mAsyncTaskDao = dao;
         }
 
         @Override
         protected Boolean doInBackground(final List<FoodModel>... params) {
-            mAsyncTaskDao.insertMultipleFoodModel(params[0]);
+            mAsyncTaskDao.insertMultipleFood(params[0]);
+            return true;
+
+        }
+
+        @Override
+        protected void onPostExecute(Boolean aBoolean) {
+            super.onPostExecute(aBoolean);
+
+
+        }
+    }
+
+    private static class insertAsyncSingleTask extends AsyncTask<FoodModel, Void, Boolean> {
+
+        private FoodDao mAsyncTaskDao;
+
+        insertAsyncSingleTask(FoodDao dao) {
+            mAsyncTaskDao = dao;
+        }
+
+        @Override
+        protected Boolean doInBackground(final FoodModel... params) {
+            mAsyncTaskDao.insertSingleFood(params[0]);
             return true;
 
         }

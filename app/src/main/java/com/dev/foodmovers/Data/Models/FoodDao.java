@@ -32,7 +32,7 @@ public interface FoodDao {
     LiveData<List<FoodModel>> searchbyName(String shortname);
 
     @Query("SELECT * FROM FOODMODEL ORDER BY id DESC LIMIT 1")
-    LiveData<FoodModel> getLastFoodFarmer();
+    LiveData<FoodModel> getLastFood();
 
 
     @Query("SELECT * FROM FOODMODEL WHERE id =:keyid")
