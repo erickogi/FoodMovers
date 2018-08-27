@@ -28,8 +28,8 @@ public interface FoodOrderDao {
     LiveData<List<FoodOrderModel>> fetchAllData();
 
 
-    @Query("SELECT * FROM FOODORDERMODEL WHERE name LIKE :name")
-    LiveData<List<FoodOrderModel>> searchbyName(String name);
+    @Query("SELECT * FROM FOODORDERMODEL WHERE code LIKE :code")
+    LiveData<List<FoodOrderModel>> searchbyName(String code);
 
     @Query("SELECT * FROM FOODORDERMODEL ORDER BY id DESC LIMIT 1")
     LiveData<FoodOrderModel> getLastFoodOrder();
@@ -38,11 +38,11 @@ public interface FoodOrderDao {
     @Query("SELECT * FROM FOODORDERMODEL WHERE id =:keyid")
     LiveData<FoodOrderModel> getFoodOrderByKeyID(int keyid);
 
-    @Query("SELECT * FROM FOODORDERMODEL WHERE orderStatus =:status")
+    @Query("SELECT * FROM FOODORDERMODEL WHERE status =:status")
     LiveData<List<FoodOrderModel>> getAllByOrderStatus(int status);
 
 
-    @Query("SELECT * FROM FOODORDERMODEL WHERE datetime LIKE :datetime")
+    @Query("SELECT * FROM FOODORDERMODEL WHERE timestamp LIKE :datetime")
     LiveData<List<FoodOrderModel>> searchByFoodOrderByDateTime(String datetime);
 
     @Query("SELECT COUNT(code) FROM FOODORDERMODEL ")

@@ -28,7 +28,7 @@ public interface FoodCartDao {
     LiveData<List<FoodCartModel>> fetchAllData();
 
 
-    @Query("SELECT * FROM FOODCARTMODEL WHERE name LIKE :shortname")
+    @Query("SELECT * FROM FOODCARTMODEL WHERE foodmodel LIKE :shortname")
     LiveData<List<FoodCartModel>> searchbyName(String shortname);
 
     @Query("SELECT * FROM FOODCARTMODEL ORDER BY id DESC LIMIT 1")

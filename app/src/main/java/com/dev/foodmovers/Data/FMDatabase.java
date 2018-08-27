@@ -5,14 +5,20 @@ import android.arch.persistence.room.Room;
 import android.arch.persistence.room.RoomDatabase;
 import android.content.Context;
 
+import com.dev.foodmovers.Data.Models.CategoriesDao;
+import com.dev.foodmovers.Data.Models.CategoriesModel;
+import com.dev.foodmovers.Data.Models.DepartmentsDao;
+import com.dev.foodmovers.Data.Models.DepartmentsModel;
 import com.dev.foodmovers.Data.Models.FoodCartDao;
 import com.dev.foodmovers.Data.Models.FoodCartModel;
 import com.dev.foodmovers.Data.Models.FoodDao;
 import com.dev.foodmovers.Data.Models.FoodModel;
 import com.dev.foodmovers.Data.Models.FoodOrderDao;
 import com.dev.foodmovers.Data.Models.FoodOrderModel;
+import com.dev.foodmovers.Data.Models.RestaurantsDao;
+import com.dev.foodmovers.Data.Models.RestaurantsModel;
 
-@Database(entities = {FoodModel.class, FoodCartModel.class, FoodOrderModel.class}, version = 1)
+@Database(entities = {FoodModel.class, FoodCartModel.class, FoodOrderModel.class, CategoriesModel.class, DepartmentsModel.class, RestaurantsModel.class}, version = 1)
 
 public abstract class FMDatabase extends RoomDatabase {
 
@@ -38,5 +44,11 @@ public abstract class FMDatabase extends RoomDatabase {
     public abstract FoodCartDao foodCartDao();
 
     public abstract FoodOrderDao foodOrderDao();
+
+    public abstract CategoriesDao categoriesDao();
+
+    public abstract DepartmentsDao departmentsDao();
+
+    public abstract RestaurantsDao restaurantsDao();
 
 }

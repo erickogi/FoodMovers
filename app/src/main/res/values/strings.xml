@@ -228,6 +228,7 @@
     <string name="gdSeparator">/</string>
     <string name="gdExt">master</string>
     <string name="urlHeders">http://</string>
+    <string name="contact_mpesa_no_07">Contact &amp; Mpesa no(07** *** ***)</string>
 
 
 </resources>
