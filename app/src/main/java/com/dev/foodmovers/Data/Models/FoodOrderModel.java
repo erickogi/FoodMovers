@@ -1,6 +1,7 @@
 package com.dev.foodmovers.Data.Models;
 
 import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.Index;
 import android.arch.persistence.room.PrimaryKey;
 
@@ -26,7 +27,23 @@ public class FoodOrderModel implements Serializable {
 
 
     private String foodcartobjects;
+
     private List<FoodCartModel> foodCartModels;
+
+    @Ignore
+    private String count;
+
+    public String getCount() {
+        if (foodCartModels != null) {
+            return String.valueOf(foodCartModels.size());
+        } else {
+            return "0";
+        }
+    }
+
+    public void setCount(String count) {
+        this.count = count;
+    }
 
     public FoodOrderModel() {
     }

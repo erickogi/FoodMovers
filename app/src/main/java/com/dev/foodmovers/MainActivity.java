@@ -31,6 +31,10 @@ import com.dev.foodmovers.Views.Login.LoginActivity;
 import com.dev.foodmovers.Views.MyProfile;
 import com.dev.lishabora.Views.Trader.Activities.DrawerClass;
 import com.dev.lishabora.Views.Trader.Activities.DrawerItemListener;
+import com.github.pwittchen.reactivenetwork.library.rx2.ReactiveNetwork;
+
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 
 public class MainActivity extends AppCompatActivity {
     public static Fragment fragment = null;
@@ -43,8 +47,18 @@ public class MainActivity extends AppCompatActivity {
     private LinearLayout linearPay;
     private PrefManager prefManager;
     SearchView mSearchView;
+    private Boolean isConnected;
+
+    void initConnectivityListener() {
+        ReactiveNetwork.observeInternetConnectivity()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(isConnectedToInternet -> {
+                    Constants.setConnected(isConnected);
 
 
+                });
+    }
     private void setUpDrawer(Toolbar toolbar) {
 
         ImageView imageView = findViewById(R.id.resideShow);
@@ -150,6 +164,7 @@ public class MainActivity extends AppCompatActivity {
 
         setUpDrawer(toolbar);
         bottomNav();
+        initConnectivityListener();
 
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {

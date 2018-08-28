@@ -39,11 +39,25 @@ class ApiConstants {
         var UpdateProducts: String = Product + "Update.php"
 
 
-        //Farmers
-        var Farmer: String = baseUrl + "Farmers/"
-        var Farmers: String = Farmer + "List.php"
-        var CreateFarmer: String = Farmer + "Create.php"
-        var UpdateFarmer: String = Farmer + "Update.php"
+        //FOOD
+        var Food: String = baseUrl + "Food/"
+        var foods: String = Food + "List.php"
+        var CreateFarmer: String = Food + "Create.php"
+        var UpdateFarmer: String = Food + "Update.php"
+
+        //CART
+        var Cart: String = baseUrl + "Cart/"
+        var carts: String = Cart + "List.php"
+        var CreateCart: String = Cart + "Create.php"
+        var updateCart: String = Cart + "Update.php"
+
+
+        //ORDER
+        var Order: String = baseUrl + "Orders/"
+        var orders: String = Order + "List.php"
+        var CreateOrder: String = Order + "Create.php"
+        var UpdateOrder: String = Order + "Update.php"
+
 
 
         //Trader Products

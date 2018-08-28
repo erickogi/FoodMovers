@@ -46,7 +46,7 @@
                 android:orientation="horizontal">
 
                 <TextView
-                    android:id="@+id/txt_food_name"
+                    android:id="@+id/txt_name"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
@@ -113,33 +113,6 @@
 
         </LinearLayout>
 
-        <android.support.design.button.MaterialButton
-
-
-            android:id="@+id/btn_remove_from_cart"
-            style="@style/Widget.MaterialComponents.Button.TextButton"
-            android:layout_width="match_parent"
-
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/img_food"
-            android:layout_gravity="end"
-            android:layout_marginEnd="3dp"
-
-            android:text="Remove"
-
-            android:textAppearance="@style/Widget.MaterialComponents.Button.TextButton"
-            android:textColor="@color/black"
-            android:textSize="12.5sp"
-
-            android:visibility="gone"
-            app:cornerRadius="2dp"
-            app:icon="@drawable/ic_remove_circle_outline_black_24dp"
-            app:iconPadding="4dp"
-            app:iconTint="@color/black"
-            app:rippleColor="@color/accent"
-            app:strokeColor="@color/black"
-
-            app:strokeWidth="1dp" />
 
     </RelativeLayout>
 

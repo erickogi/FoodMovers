@@ -42,7 +42,7 @@ public class FoodOrderRepo {
                             JsonArray jsonArray = gson.toJsonTree(responseModel.getData()).getAsJsonArray();
                             Type listType = new TypeToken<LinkedList<FoodOrderModel>>() {
                             }.getType();
-                            insert(gson.fromJson(jsonArray, listType));
+                            insert((List<FoodOrderModel>) gson.fromJson(jsonArray, listType));
 
                             //fetchAllData();
 
@@ -53,7 +53,7 @@ public class FoodOrderRepo {
                             JsonArray jsonArray = gson.toJsonTree(responseModel.getData()).getAsJsonArray();
                             Type listType = new TypeToken<LinkedList<FoodOrderRepo>>() {
                             }.getType();
-                            insert(gson.fromJson(jsonArray, listType));
+                            insert((List<FoodOrderModel>) gson.fromJson(jsonArray, listType));
 
                             //fetchAllData();
 
@@ -76,6 +76,12 @@ public class FoodOrderRepo {
         daao = db.foodOrderDao();
 
         new insertAsyncTask(daao).execute(foodCartModels);
+    }
+
+    public void insert(FoodOrderModel foodCartModels) {
+        daao = db.foodOrderDao();
+
+        new insertAsyncSingleTask(daao).execute(foodCartModels);
     }
 
     public LiveData<FoodOrderModel> getLastFoodOrder() {

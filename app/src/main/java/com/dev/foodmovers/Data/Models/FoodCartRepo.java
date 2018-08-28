@@ -36,13 +36,14 @@ public class FoodCartRepo {
     public LiveData<List<FoodCartModel>> fetchAllData(boolean isOnline, @Nullable String url, @Nullable JSONObject jsonObject) {
 
         if (isOnline) {
+            assert jsonObject != null;
             Request.Companion.getResponse(url, jsonObject, "", new ResponseCallback() {
                         @Override
                         public void response(ResponseModel responseModel) {
                             JsonArray jsonArray = gson.toJsonTree(responseModel.getData()).getAsJsonArray();
                             Type listType = new TypeToken<LinkedList<FoodCartModel>>() {
                             }.getType();
-                            insert(gson.fromJson(jsonArray, listType));
+                            insert((List<FoodCartModel>) gson.fromJson(jsonArray, listType));
 
                             //fetchAllData();
 
@@ -53,17 +54,17 @@ public class FoodCartRepo {
                             JsonArray jsonArray = gson.toJsonTree(responseModel.getData()).getAsJsonArray();
                             Type listType = new TypeToken<LinkedList<FoodCartRepo>>() {
                             }.getType();
-                            insert(gson.fromJson(jsonArray, listType));
+                            insert((List<FoodCartModel>) gson.fromJson(jsonArray, listType));
 
                             //fetchAllData();
 
                         }
                     }
             );
-            return null;
-        } else {
-            return daao.fetchAllData();
+
         }
+            return daao.fetchAllData();
+
     }
 
     private LiveData<List<FoodCartModel>> fetchAllData() {
@@ -78,8 +79,18 @@ public class FoodCartRepo {
         new insertAsyncTask(daao).execute(foodCartModels);
     }
 
+    public void insert(FoodCartModel foodCartModels) {
+        daao = db.foodCartDao();
+
+        new insertAsyncSingleTask(daao).execute(foodCartModels);
+    }
+
     public LiveData<FoodCartModel> getLastFoodCart() {
         return db.foodCartDao().getLastFoodCart();
+    }
+
+    public LiveData<Integer> getCountFoodCart() {
+        return db.foodCartDao().getNumberOfRows(0);
     }
 
     public LiveData<List<FoodCartModel>> searchByName(String name) {

@@ -20,27 +20,27 @@ import java.lang.reflect.Type;
 import java.util.LinkedList;
 import java.util.List;
 
-public class FoodRepo {
-    private FoodDao daao;
+public class RestaurantRepo {
+    private RestaurantsDao daao;
 
     private FMDatabase db;
     private Gson gson;
 
 
-    public FoodRepo(Application application) {
+    public RestaurantRepo(Application application) {
         db = FMDatabase.getDatabase(application);
-        daao = db.foodDao();
+        daao = db.restaurantsDao();
     }
 
 
-    public LiveData<List<FoodModel>> fetchAllData(boolean isOnline, @Nullable String url, @Nullable JSONObject jsonObject, String department, String category, String restaurant) {
+    public LiveData<List<RestaurantsModel>> fetchAllData(boolean isOnline, @Nullable String url, @Nullable JSONObject jsonObject) {
 
         if (isOnline) {
             Request.Companion.getResponse(url, jsonObject, "", new ResponseCallback() {
                         @Override
                         public void response(ResponseModel responseModel) {
                             JsonArray jsonArray = gson.toJsonTree(responseModel.getData()).getAsJsonArray();
-                            Type listType = new TypeToken<LinkedList<FoodModel>>() {
+                            Type listType = new TypeToken<LinkedList<RestaurantsModel>>() {
                             }.getType();
                             insert(gson.fromJson(jsonArray, listType));
 
@@ -50,47 +50,56 @@ public class FoodRepo {
                         @Override
                         public void response(ResponseObject responseModel) {
                             JsonArray jsonArray = gson.toJsonTree(responseModel.getData()).getAsJsonArray();
-                            Type listType = new TypeToken<LinkedList<FoodModel>>() {
+                            Type listType = new TypeToken<LinkedList<RestaurantsModel>>() {
                             }.getType();
                             insert(gson.fromJson(jsonArray, listType));
 
                         }
                     }
             );
-            return daao.fetchAllData();
+            return null;
         } else {
-        return daao.fetchAllData();
+            return daao.fetchAllData();
         }
     }
 
 
-    public void insert(List<FoodModel> foodModels) {
-        daao = db.foodDao();
+    public void insert(List<RestaurantsModel> restaurantsModels) {
+        daao = db.restaurantsDao();
 
-        new insertAsyncTask(daao).execute(foodModels);
+        new insertAsyncTask(daao).execute(restaurantsModels);
     }
 
-    public LiveData<FoodModel> getLastFood() {
-        return db.foodDao().getLastFood();
+    public LiveData<RestaurantsModel> getLast() {
+        return db.restaurantsDao().getLastRestaurants();
     }
 
-    public LiveData<List<FoodModel>> searchByName(String name) {
-        return db.foodDao().searchbyName(name);
+    public LiveData<List<RestaurantsModel>> searchByName(String name) {
+        return db.restaurantsDao().searchbyName(name);
 
     }
 
+    public void delete(RestaurantsModel model) {
+        new deleteAsyncTask(db.restaurantsDao()).execute(model);
 
-    private static class insertAsyncTask extends AsyncTask<List<FoodModel>, Void, Boolean> {
+    }
 
-        private FoodDao mAsyncTaskDao;
+    public void update(RestaurantsModel model) {
+        new updateAsyncTask(db.restaurantsDao()).execute(model);
 
-        insertAsyncTask(FoodDao dao) {
+    }
+
+    private static class insertAsyncTask extends AsyncTask<List<RestaurantsModel>, Void, Boolean> {
+
+        private RestaurantsDao mAsyncTaskDao;
+
+        insertAsyncTask(RestaurantsDao dao) {
             mAsyncTaskDao = dao;
         }
 
         @Override
-        protected Boolean doInBackground(final List<FoodModel>... params) {
-            mAsyncTaskDao.insertMultipleFood(params[0]);
+        protected Boolean doInBackground(final List<RestaurantsModel>... params) {
+            mAsyncTaskDao.insertMultipleRestaurants(params[0]);
             return true;
 
         }
@@ -103,17 +112,17 @@ public class FoodRepo {
         }
     }
 
-    private static class insertAsyncSingleTask extends AsyncTask<FoodModel, Void, Boolean> {
+    private static class insertAsyncSingleTask extends AsyncTask<RestaurantsModel, Void, Boolean> {
 
-        private FoodDao mAsyncTaskDao;
+        private RestaurantsDao mAsyncTaskDao;
 
-        insertAsyncSingleTask(FoodDao dao) {
+        insertAsyncSingleTask(RestaurantsDao dao) {
             mAsyncTaskDao = dao;
         }
 
         @Override
-        protected Boolean doInBackground(final FoodModel... params) {
-            mAsyncTaskDao.insertSingleFood(params[0]);
+        protected Boolean doInBackground(final RestaurantsModel... params) {
+            mAsyncTaskDao.insertSingleRestaurants(params[0]);
             return true;
 
         }
@@ -126,27 +135,16 @@ public class FoodRepo {
         }
     }
 
+    private static class updateAsyncTask extends AsyncTask<RestaurantsModel, Void, Boolean> {
 
-    public void delete(FoodModel model) {
-        new deleteAsyncTask(db.foodDao()).execute(model);
+        private RestaurantsDao mAsyncTaskDao;
 
-    }
-
-    public void update(FoodModel model) {
-        new updateAsyncTask(db.foodDao()).execute(model);
-
-    }
-
-    private static class updateAsyncTask extends AsyncTask<FoodModel, Void, Boolean> {
-
-        private FoodDao mAsyncTaskDao;
-
-        updateAsyncTask(FoodDao dao) {
+        updateAsyncTask(RestaurantsDao dao) {
             mAsyncTaskDao = dao;
         }
 
         @Override
-        protected Boolean doInBackground(final FoodModel... params) {
+        protected Boolean doInBackground(final RestaurantsModel... params) {
             mAsyncTaskDao.updateRecord(params[0]);
             return true;
 
@@ -160,16 +158,16 @@ public class FoodRepo {
         }
     }
 
-    private static class deleteAsyncTask extends AsyncTask<FoodModel, Void, Boolean> {
+    private static class deleteAsyncTask extends AsyncTask<RestaurantsModel, Void, Boolean> {
 
-        private FoodDao mAsyncTaskDao;
+        private RestaurantsDao mAsyncTaskDao;
 
-        deleteAsyncTask(FoodDao dao) {
+        deleteAsyncTask(RestaurantsDao dao) {
             mAsyncTaskDao = dao;
         }
 
         @Override
-        protected Boolean doInBackground(final FoodModel... params) {
+        protected Boolean doInBackground(final RestaurantsModel... params) {
             mAsyncTaskDao.deleteRecord(params[0]);
             return true;
 
@@ -182,7 +180,6 @@ public class FoodRepo {
 
         }
     }
-
 
 
 }

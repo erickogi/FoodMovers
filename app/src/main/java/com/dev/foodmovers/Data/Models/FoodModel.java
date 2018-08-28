@@ -2,6 +2,7 @@ package com.dev.foodmovers.Data.Models;
 
 
 import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.Index;
 import android.arch.persistence.room.PrimaryKey;
 
@@ -34,6 +35,36 @@ public class FoodModel implements Serializable {
     private String statusname;
     private String taxcode;
     private String tax;
+
+    @Ignore
+    private boolean hasDiscount;
+    private String priceOne;
+    private String priceTwo;
+
+    public boolean isHasDiscount() {
+        return discount != null && !discount.equals("0.0");
+    }
+
+
+    public void setHasDiscount(boolean hasDiscount) {
+        this.hasDiscount = hasDiscount;
+    }
+
+    public String getPriceOne() {
+        return price;
+    }
+
+    public void setPriceOne(String priceOne) {
+        this.priceOne = priceOne;
+    }
+
+    public String getPriceTwo() {
+        return String.valueOf(Double.valueOf(price) - Double.valueOf(discount));
+    }
+
+    public void setPriceTwo(String priceTwo) {
+        this.priceTwo = priceTwo;
+    }
 
     public FoodModel() {
     }
