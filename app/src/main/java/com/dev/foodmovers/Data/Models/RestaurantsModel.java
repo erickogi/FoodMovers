@@ -15,6 +15,15 @@ public class RestaurantsModel {
     private String phone;
     private String physicaladdress;
 
+
+    public RestaurantsModel(int id, String code, String name, String phone, String physicaladdress) {
+        this.id = id;
+        this.code = code;
+        this.name = name;
+        this.phone = phone;
+        this.physicaladdress = physicaladdress;
+    }
+
     public String getPhone() {
         return phone;
     }

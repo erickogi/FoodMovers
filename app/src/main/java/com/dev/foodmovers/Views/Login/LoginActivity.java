@@ -4,6 +4,7 @@ import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputEditText;
@@ -21,9 +22,22 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.androidnetworking.error.ANError;
 import com.dev.foodmovers.Data.PrefManager;
+import com.dev.foodmovers.Data.UserModel;
+import com.dev.foodmovers.Data.UserModelParse;
+import com.dev.foodmovers.Kogi.NetworkUtils;
 import com.dev.foodmovers.MainActivity;
 import com.dev.foodmovers.R;
+import com.dev.lishabora.Utils.Network.ApiConstants;
+import com.dev.lishabora.Utils.Network.Request;
+import com.dev.lishabora.Utils.Network.RequestListener;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.HashMap;
 
 import static com.dev.foodmovers.Kogi.Utils.GeneralUtills.isFilledTextInputEditText;
 
@@ -109,8 +123,15 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
         btnLogin.setOnClickListener(v -> {
 
-            startActivity(new Intent(LoginActivity.this, MainActivity.class));
-            finish();
+            if (isFilledTextInputEditText(mEditTextPassword) && isFilled(mEditTextUserId)) {
+                if (new NetworkUtils(LoginActivity.this).isNetworkAvailable()) {
+                    //login1(1);
+                    login(mEditTextUserId.getText().toString(), mEditTextPassword.getText().toString());
+                } else {
+                    snack("Couldn't connect Please check your internet connection");
+                    //alertDialogDelete("Couldn't connect Please check your internet connection");
+                }
+            }
 
         });
 
@@ -278,6 +299,137 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
 
     private void register(String name, String lastname, String email, String mobile, String password) {
+        HashMap<String, String> params = new HashMap<>();
+
+
+        params.put("name", name);
+        params.put("firstName", name);
+        params.put("lastname", lastname);
+        params.put("role_id", "1");
+        params.put("firebasetoken", prefrenceManager.getKeyUserFirebasetoken());
+        params.put("email", email);
+        params.put("mobile", mobile);
+        params.put("phoneNumber", mobile);
+        params.put("phone", mobile);
+        params.put("password", password);
+
+
+        HashMap<String, String> reg = new HashMap<>();
+        reg.put("firstName", name);
+        reg.put("lastName", lastname);
+        reg.put("role_id", "2");
+        if (prefrenceManager.getKeyUserFirebasetoken() != null) {
+            reg.put("firebasetoken", prefrenceManager.getKeyUserFirebasetoken());
+        } else {
+            reg.put("firebasetoken", "null");
+
+        }
+        reg.put("email", email);
+        reg.put("mobile", mobile);
+        reg.put("phoneNumber", mobile);
+        reg.put("password", password);
+
+
+        progressDialog = new ProgressDialog(LoginActivity.this);
+        progressDialog.setMessage("Signing in....");
+        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        progressDialog.setIndeterminate(true);
+        progressDialog.setCancelable(false);
+        progressDialog.show();
+
+        Request.Companion.postRequest(ApiConstants.Companion.getSignAuth(), reg, null,
+                new RequestListener() {
+                    @Override
+                    public void onError(ANError error) {
+                        Log.d("respp", error.toString());
+
+                        Log.d("regerr", error.toString());
+                        progressDialog.dismiss();
+                        // alertDialogDelete("Error Registering");
+                        snack("Error occurred . Try again .");
+                    }
+
+                    @Override
+                    public void onError(String errorss) {
+                        Log.d("respp", errorss);
+
+                        Log.d("regerr", errorss);
+                        progressDialog.dismiss();
+
+                        //alertDialogDelete("Error Registering");
+
+                        String error = "Logging In was unsuccessful";
+                        try {
+                            JSONObject jsonObject = new JSONObject(errorss);
+                            if (jsonObject.opt("errors") != null) {
+                                JSONObject errors = jsonObject.getJSONObject("errors");
+
+                                if (errors.opt("root") != null) {
+                                    alertDialogDelete(errors.getString("root"));
+                                } else if (errors.opt("email") != null) {
+                                    alertDialogDelete(errors.getJSONArray("email").optString(0));
+                                } else if (errors.opt("password") != null) {
+                                    alertDialogDelete(errors.getJSONArray("password").optString(0));
+                                } else if (errors.opt("phoneNumber") != null) {
+                                    alertDialogDelete(errors.getJSONArray("phoneNumber").optString(0));
+                                } else {
+                                    alertDialogDelete(error);
+                                }
+                            }
+
+                        } catch (Exception nm) {
+                            nm.printStackTrace();
+                            Log.d("logintagjj", nm.toString());
+
+                            alertDialogDelete(error);
+                        }
+
+
+                        snack("Error occurred . Try again .");
+                    }
+
+                    @Override
+                    public void onSuccess(String response) {
+
+                        Log.d("respp", response);
+                        try {
+                            JSONObject jsonObject = new JSONObject(response);
+                            if (!jsonObject.getString("error").equals("true")) {
+                                //fragment = new LoginFragment();
+                                progressDialog.dismiss();
+                                // popOutFragments();
+                                // setUpView();
+                                login(email, password);
+
+                                //alertDialogDelete("succesfull");
+                            } else {
+                                String errr = "";
+                                try {
+
+                                    JSONObject jsonObject1 = jsonObject.getJSONObject("errors");
+                                    JSONArray jsonArray = jsonObject1.getJSONArray("email");
+
+
+                                    for (int a = 0; a > jsonArray.length(); a++) {
+                                        errr = jsonArray.getString(a);
+                                    }
+
+                                } catch (Exception nm) {
+                                    nm.printStackTrace();
+                                }
+                                progressDialog.dismiss();
+                                snack("Error occurred ." + errr);
+                                //alertDialogDelete(jsonObject.getString("message"));
+                            }
+                        } catch (JSONException e) {
+                            progressDialog.dismiss();
+                            e.printStackTrace();
+                            Log.d("signupexc", e.toString());
+                        }
+
+                    }
+                });
+
 
 
     }
@@ -311,6 +463,160 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     private void login(String email, String password) {
 
+        NetworkUtils networkUtils = new NetworkUtils(LoginActivity.this);
+
+        if (networkUtils.isNetworkAvailable()) {
+
+
+            MaterialDialog.Builder builder = new MaterialDialog.Builder(LoginActivity.this)
+                    .title("Verifying you")
+                    .content("Please Wait")
+                    .cancelable(false)
+                    .progress(true, 0);
+
+
+            dialog = builder.build();
+            dialog.show();
+
+            PrefManager prefManager = new PrefManager(LoginActivity.this);
+
+            String url = ApiConstants.Companion.getLoginAuth();
+
+            HashMap<String, String> params = new HashMap<>();
+            params.put("mobile", email);
+            params.put("email", email);
+            params.put("password", password);
+            params.put("user", "PHOTOZURI");
+            params.put("role", "2");
+
+            Log.d("logintag", params.toString());
+
+            Request.Companion.postRequest(url, params, null, new RequestListener() {
+                @Override
+                public void onError(ANError error) {
+                    Log.d("logintag", error.toString());
+                    dialog.dismiss();
+                    prefManager.setIsLoggedIn(false);
+
+                }
+
+                @Override
+                public void onError(String errorss) {
+                    Log.d("logintagjj", errorss);
+                    dialog.dismiss();
+
+                    String error = "Logging In was unsuccessful";
+                    try {
+                        JSONObject jsonObject = new JSONObject(errorss);
+                        if (jsonObject.opt("errors") != null) {
+                            JSONObject errors = jsonObject.getJSONObject("errors");
+
+                            if (errors.opt("root") != null) {
+                                alertDialogDelete(errors.getString("root"));
+                            } else if (errors.opt("email") != null) {
+                                alertDialogDelete(errors.getJSONArray("email").optString(0));
+                            } else if (errors.opt("password") != null) {
+                                alertDialogDelete(errors.getJSONArray("password").optString(0));
+                            } else {
+                                alertDialogDelete(error);
+                            }
+                        }
+
+                    } catch (Exception nm) {
+                        nm.printStackTrace();
+                        Log.d("logintagjj", nm.toString());
+
+                        alertDialogDelete(error);
+                    }
+
+
+                    //alertDialogDelete("Login error ..Try again ");
+                    prefManager.setIsLoggedIn(false);
+
+                }
+
+                @Override
+                public void onSuccess(String response) {
+                    Log.d("logintag", response);
+                    if (dialog != null) {
+                        dialog.dismiss();
+                    }
+
+                    try {
+                        JSONObject jsonObject = new JSONObject(response);
+                        if (jsonObject.getString("error").equals("false") || !jsonObject.getBoolean("error")) {
+                            UserModel userModel = UserModelParse.getUser(response, prefManager.getISV1());
+
+                            if (prefrenceManager.getKeyUserFirebasetoken().equals(userModel.getFirebasetoken())) {
+
+                            } else {
+                                try {
+                                    if (prefrenceManager != null && prefrenceManager.getKeyUserFirebasetoken() != null && !"null".equals(prefrenceManager.getKeyUserFirebasetoken())) {
+                                        Request.Companion.updateFire(prefrenceManager.getKeyUserFirebasetoken(), String.valueOf(userModel.getUserId()), "");
+                                    }
+                                } catch (Exception nm) {
+                                    nm.printStackTrace();
+                                }
+                                userModel.setFirebasetoken(prefrenceManager.getKeyUserFirebasetoken());
+                            }
+
+                            if (goooglePhoto != null) {
+                                userModel.setUriPhoto(Uri.parse(goooglePhoto));
+                            }
+
+                            prefManager.setUserData(userModel);
+                            prefManager.setIsLoggedIn(true);
+
+
+                            startActivity(new Intent(LoginActivity.this, MainActivity.class));
+
+
+                            finish();
+
+                        } else {
+                            prefManager.setIsLoggedIn(false);
+
+                            dialog.dismiss();
+                            String error = "Logging In was unsuccessful";
+                            try {
+                                if (jsonObject.getString("errors") != null) {
+                                    JSONObject errors = jsonObject.getJSONObject("errors");
+
+                                    if (errors.getString("root") != null) {
+                                        alertDialogDelete(errors.getString("root"));
+                                    } else if (errors.getString("email") != null) {
+                                        alertDialogDelete(errors.optString("email"));
+                                    } else if (errors.getString("password") != null) {
+                                        alertDialogDelete(errors.getString("password"));
+                                    } else {
+                                        alertDialogDelete(error);
+                                    }
+                                }
+
+                            } catch (Exception nm) {
+                                nm.printStackTrace();
+                            }
+
+
+                        }
+                    } catch (JSONException j) {
+                        prefManager.setIsLoggedIn(false);
+                        alertDialogDelete("Logging In was unsuccessful");
+
+                        Log.d("logingerr", j.toString() + "  " + response);
+                        dialog.dismiss();
+                    }
+
+
+                }
+            });
+
+
+        } else {
+            snack("Check your Internet Connection");
+
+        }
+
     }
 
 
@@ -336,7 +642,107 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     }
 
     private void forgotPasswordCall(String s) {
+        HashMap<String, String> param = new HashMap<>();
 
+//        // param.put("apikey", prefrenceManager.getC_apikey());
+//        param.put("_debug", "0");
+        param.put("email", s);
+//        param.put("_apikey", "");
+//        param.put("_esapikey", ApiConstants.ESAPIKEY);
+//        param.put("_apty", "caa-main");
+//        param.put("_apir", "");
+
+        progressDialog = new ProgressDialog(LoginActivity.this);
+        progressDialog.setMessage("Working....");
+        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        progressDialog.setIndeterminate(true);
+        progressDialog.setCancelable(false);
+        progressDialog.show();
+
+
+        Request.Companion.postRequest(ApiConstants.Companion.getPasswordAuth(), param, "", new RequestListener() {
+            @Override
+            public void onError(ANError error) {
+                //  Log.d("forgotpass", error.toString());
+
+                if (progressDialog != null && progressDialog.isShowing()) {
+                    progressDialog.dismiss();
+                }
+                //  alertDialog("Error occurred . Please try again ");
+
+            }
+
+            @Override
+            public void onError(String errorss) {
+                // Log.d("forgotpass", error);
+
+                if (progressDialog != null && progressDialog.isShowing()) {
+                    progressDialog.dismiss();
+                }
+
+
+                try {
+                    JSONObject jsonObject = new JSONObject(errorss);
+                    if (!jsonObject.getBoolean("error")) {
+                        String res = jsonObject.getString("data");
+                        alertDialogDelete(res);
+
+                        changeView(2);
+
+                    } else {
+
+
+                        JSONObject errors = jsonObject.getJSONObject("errors");
+                        JSONArray error = errors.getJSONArray("email");
+                        snack(error.optString(0));
+                        alertDialogDelete(error.optString(0));
+
+                    }
+
+
+                } catch (JSONException e) {
+                    Log.d("forgotpassddd", e.toString());
+                    e.printStackTrace();
+                }
+
+            }
+
+            @Override
+            public void onSuccess(String response) {
+                if (progressDialog != null && progressDialog.isShowing()) {
+                    progressDialog.dismiss();
+                }
+                Log.d("forgotpass", response);
+                try {
+                    JSONObject jsonObject = new JSONObject(response);
+                    if (!jsonObject.getBoolean("error")) {
+                        String res = jsonObject.getString("data");
+                        alertDialogDelete(res);
+
+                        changeView(2);
+
+                    } else {
+
+
+                        JSONObject errors = jsonObject.getJSONObject("errors");
+
+                        JSONArray error = errors.getJSONArray("email");
+                        snack(error.optString(0));
+                        alertDialogDelete(error.optString(0));
+
+
+                        //  alertDialog("" + jsonObject.getString("srm"));
+                    }
+
+
+                } catch (JSONException e) {
+                    Log.d("forgotpassddd", e.toString());
+                    //alertDialog("Error occurred . Please try again ");
+                    e.printStackTrace();
+                }
+
+            }
+        });
 
     }
 

@@ -40,7 +40,7 @@ public interface CategoriesDao {
 
 
     @Query("SELECT COUNT(code) FROM categories ")
-    int getNumberOfRows(int av);
+    int getNumberOfRows();
 
     @Update
     void updateRecord(CategoriesModel category);

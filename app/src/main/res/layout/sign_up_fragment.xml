@@ -34,7 +34,7 @@
             xmlns:app="http://schemas.android.com/apk/res-auto"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
-            android:background="@color/colorAccent"
+            android:background="@color/colorPrimaryDark"
             android:orientation="vertical"
             android:padding="20dp">
 
@@ -291,7 +291,7 @@
         android:id="@+id/login_view"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:background="@color/colorPrimary"
+        android:background="@color/colorPrimaryDark"
         android:padding="20dp"
         android:visibility="visible">
 
@@ -450,7 +450,7 @@
         android:id="@+id/forgot_password_l"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:background="@color/colorPrimary"
+        android:background="@color/colorPrimaryDark"
         android:gravity="center"
         android:orientation="vertical"
         android:padding="20dp"

@@ -40,7 +40,7 @@ public interface RestaurantsDao {
 
 
     @Query("SELECT COUNT(code) FROM restaurant ")
-    int getNumberOfRows(int av);
+    int getNumberOfRows();
 
     @Update
     void updateRecord(RestaurantsModel restaurant);

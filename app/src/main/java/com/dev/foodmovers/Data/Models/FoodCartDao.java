@@ -40,7 +40,7 @@ public interface FoodCartDao {
 
 
     @Query("SELECT COUNT(code) FROM FOODCARTMODEL ")
-    LiveData<Integer> getNumberOfRows(int av);
+    LiveData<Integer> getNumberOfRows();
 
     @Update
     void updateRecord(FoodCartModel foodCartModel);

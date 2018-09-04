@@ -11,6 +11,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,8 +24,11 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 import com.dev.foodmovers.Adapters.FoodListAdapter;
 import com.dev.foodmovers.Constants;
+import com.dev.foodmovers.Data.Models.FoodCartModel;
 import com.dev.foodmovers.Data.Models.FoodModel;
 import com.dev.foodmovers.Data.Models.FoodSearchOject;
+import com.dev.foodmovers.Kogi.Utils.DateTimeUtils;
+import com.dev.foodmovers.Kogi.Utils.GeneralUtills;
 import com.dev.foodmovers.MainActivity;
 import com.dev.foodmovers.R;
 import com.dev.foodmovers.ViewModels.FoodViewModel;
@@ -72,7 +76,7 @@ public class FragmentProducts extends Fragment implements View.OnClickListener {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         try {
-            ((MainActivity) Objects.requireNonNull(getActivity())).setSearchVisibility(View.VISIBLE);
+            ((MainActivity) Objects.requireNonNull(getActivity())).setSearchVisibility(View.VISIBLE, true);
         } catch (Exception nm) {
             nm.printStackTrace();
         }
@@ -92,6 +96,7 @@ public class FragmentProducts extends Fragment implements View.OnClickListener {
     private void getData() {
         viewModel.getFoods(Constants.isConnected(), getSearchObject(), "", "", "").observe(this, foodModels -> {
             if (foodModels != null) {
+                Log.d("foodgg", "" + foodModels.size());
                 FragmentProducts.this.foodModels = foodModels;
                 listAdapter.refresh(foodModels);
             }
@@ -124,8 +129,7 @@ public class FragmentProducts extends Fragment implements View.OnClickListener {
     void initViews() {
 
         recyclerView = view.findViewById(R.id.recyclerView);
-        recyclerView = view.findViewById(R.id.recyclerView);
-        mStaggeredLayoutManager = new StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL);
+        mStaggeredLayoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(mStaggeredLayoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
 
@@ -144,6 +148,7 @@ public class FragmentProducts extends Fragment implements View.OnClickListener {
             public void onClickListener(int position) {
 
 
+                dialog(foodModels.get(position));
             }
 
             @Override
@@ -165,11 +170,13 @@ public class FragmentProducts extends Fragment implements View.OnClickListener {
             @Override
             public void onClickListener(int adapterPosition, @NotNull View view) {
 
+                dialog(foodModels.get(adapterPosition));
 
             }
         });
-        recyclerView.setAdapter(listAdapter);
 
+
+        recyclerView.setAdapter(listAdapter);
         listAdapter.notifyDataSetChanged();
 
 
@@ -181,6 +188,10 @@ public class FragmentProducts extends Fragment implements View.OnClickListener {
 
         AlertDialog.Builder alertDialogBuilderUserInput = new AlertDialog.Builder(Objects.requireNonNull(getContext()));
         alertDialogBuilderUserInput.setView(mView);
+
+        alertDialogBuilderUserInput.setCancelable(false);
+        AlertDialog h = alertDialogBuilderUserInput.show();
+        //alertDialogBuilderUserInput.show();
 
         TextView txtName, txtQty, txtPrice;
         ImageView imgFood, imgAdd, imgRemove, imgDelete;
@@ -197,13 +208,23 @@ public class FragmentProducts extends Fragment implements View.OnClickListener {
 
         imgAdd = mView.findViewById(R.id.img_add);
         imgRemove = mView.findViewById(R.id.img_remove);
-        imgDelete = mView.findViewById(R.id.img_delete);
+        imgDelete = mView.findViewById(R.id.img_cancel);
+
+        imgAdd.setOnClickListener(view -> calc(imgAdd, txtQty));
 
 
-        imgAdd.setOnClickListener(this);
-        imgRemove.setOnClickListener(this);
-        imgDelete.setOnClickListener(this);
-        btnAdd.setOnClickListener(this);
+        imgRemove.setOnClickListener(view -> calc(imgRemove, txtQty));
+        imgDelete.setOnClickListener(view -> {
+            h.dismiss();
+        });
+        Gson gson = new Gson();
+        String food = gson.toJson(model);
+        btnAdd.setOnClickListener(view ->
+        {
+            viewModel.insertCart(new FoodCartModel(0, "" + GeneralUtills.getRandon(9000, 1000), model.getCode(), model.getName(), model.getPrice(), model.getDiscount(), Integer.valueOf(txtQty.getText().toString()), 1, "Added", DateTimeUtils.getNow(), food, "", model));
+
+            h.dismiss();
+        });
 
 
         txtName.setText(model.getName());
@@ -216,6 +237,20 @@ public class FragmentProducts extends Fragment implements View.OnClickListener {
                 .into(imgFood);
 
 
+    }
+
+    public void calc(View imgAction, View txtQty) {
+        String gty = ((TextView) txtQty).getText().toString();
+
+        if (imgAction.getId() == R.id.img_add) {
+            int vq = Integer.valueOf(gty) + 1;
+            ((TextView) txtQty).setText(String.valueOf(vq));
+        } else {
+            int vq = Integer.valueOf(gty);
+            if (vq != 1) {
+                ((TextView) txtQty).setText(String.valueOf(vq - 1));
+            }
+        }
     }
 
 

@@ -15,6 +15,8 @@ class ApiConstants {
         //Accounts
         var Accounts: String = baseUrl + "Accounts/"
         var PhoneAuth: String = Accounts + "AuthPhone.php"
+        var LoginAuth: String = Accounts + "Login.php"
+        var SignAuth: String = Accounts + "SignUp.php"
         var PasswordAuth: String = Accounts + "AuthPassword.php"
         var newPassordConfirm: String = Accounts + "ChangePassword.php"
         var otpRequest: String = Accounts + "ForgotPassword.php"

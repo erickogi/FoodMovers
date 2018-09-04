@@ -387,6 +387,51 @@ class Request {
         }
 
 
+        fun updateFire(token: String, userId: String, url: String) {
+            val params = HashMap<String, String>()
+            params["id"] = userId
+            params["token"] = token
+
+            //postRequest()
+
+            postRequest(
+                    url,
+                    params,
+                    null,
+                    object : RequestListener {
+                        override fun onError(error: ANError) {
+
+                        }
+
+                        override fun onError(error: String) {
+
+
+                        }
+
+                        override fun onSuccess(response: String) {
+                            try {
+
+
+                                val gson = Gson()
+                                responseModel = gson.fromJson(response, ResponseModel::class.java)
+
+
+                            } catch (e: Exception) {
+                                responseModel.data = null
+                                responseModel.resultCode = 0
+                                responseModel.resultDescription = e.message
+
+                                e.printStackTrace()
+                            }
+
+                        }
+                    }
+            )
+
+
+        }
+
     }
+
 
 }

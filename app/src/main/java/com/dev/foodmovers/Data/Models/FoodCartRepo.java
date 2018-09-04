@@ -90,7 +90,7 @@ public class FoodCartRepo {
     }
 
     public LiveData<Integer> getCountFoodCart() {
-        return db.foodCartDao().getNumberOfRows(0);
+        return db.foodCartDao().getNumberOfRows();
     }
 
     public LiveData<List<FoodCartModel>> searchByName(String name) {

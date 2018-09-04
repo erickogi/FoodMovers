@@ -20,14 +20,15 @@ public class CartViewHolder extends RecyclerView.ViewHolder implements View.OnCl
     public CartViewHolder(@NonNull View itemView, OnclickRecyclerListener listener) {
         super(itemView);
         listenerWeakReference = new WeakReference<>(listener);
-        itemView.setOnClickListener(this);
-        itemView.setOnLongClickListener(this);
+        //    itemView.setOnClickListener(this);
+        //    itemView.setOnLongClickListener(this);
 
         imgFood = itemView.findViewById(R.id.img_food);
-        imgFood.setOnClickListener(this);
+        //    imgFood.setOnClickListener(this);
 
         txtName = itemView.findViewById(R.id.txt_name);
         txtQty = itemView.findViewById(R.id.txt_qty);
+        txtPrice = itemView.findViewById(R.id.txt_price);
 
         imgAdd = itemView.findViewById(R.id.img_add);
         imgRemove = itemView.findViewById(R.id.img_remove);
@@ -43,6 +44,7 @@ public class CartViewHolder extends RecyclerView.ViewHolder implements View.OnCl
 
     @Override
     public void onClick(View view) {
+
 
         listenerWeakReference.get().onClickListener(getAdapterPosition(), view);
 

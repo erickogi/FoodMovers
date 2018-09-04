@@ -8,7 +8,7 @@ import android.arch.persistence.room.PrimaryKey;
 import java.io.Serializable;
 import java.util.List;
 
-@Entity(tableName = "foodordermodel", indices = {@Index(value = {"datetime"}, unique = true)})
+@Entity(tableName = "foodordermodel", indices = {@Index(value = {"code"}, unique = true)})
 
 public class FoodOrderModel implements Serializable {
 
@@ -28,6 +28,7 @@ public class FoodOrderModel implements Serializable {
 
     private String foodcartobjects;
 
+    @Ignore
     private List<FoodCartModel> foodCartModels;
 
     @Ignore
@@ -45,8 +46,6 @@ public class FoodOrderModel implements Serializable {
         this.count = count;
     }
 
-    public FoodOrderModel() {
-    }
 
     public FoodOrderModel(int id, String code, String price, String discount, int status, String statusname, String clientid, String timestamp) {
         this.id = id;

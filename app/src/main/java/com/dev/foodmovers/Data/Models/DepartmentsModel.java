@@ -13,6 +13,12 @@ public class DepartmentsModel {
     private String code;
     private String name;
 
+    public DepartmentsModel(int id, String code, String name) {
+        this.id = id;
+        this.code = code;
+        this.name = name;
+    }
+
     public int getId() {
         return id;
     }

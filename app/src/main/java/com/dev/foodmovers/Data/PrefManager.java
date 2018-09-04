@@ -38,6 +38,7 @@ public class PrefManager {
     private static final String googleAuthKey = "googleAuth";
     private static final String googleAuthConnected = "googleAuthConnected";
 
+
     // Shared Preferences
     SharedPreferences pref;
     // Editor for Shared preferences

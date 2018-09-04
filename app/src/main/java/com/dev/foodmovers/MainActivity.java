@@ -1,6 +1,7 @@
 package com.dev.foodmovers;
 
 import android.app.SearchManager;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -18,11 +19,14 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigation;
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigationItem;
+import com.dev.foodmovers.Data.DataGen;
 import com.dev.foodmovers.Data.PrefManager;
 import com.dev.foodmovers.Kogi.Badge.BadgeView;
+import com.dev.foodmovers.ViewModels.FoodViewModel;
 import com.dev.foodmovers.Views.Fragments.FragmentCompleted;
 import com.dev.foodmovers.Views.Fragments.FragmentProducts;
 import com.dev.foodmovers.Views.Fragments.FragmentSaved;
@@ -36,6 +40,8 @@ import com.github.pwittchen.reactivenetwork.library.rx2.ReactiveNetwork;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 
+import static android.view.View.GONE;
+
 public class MainActivity extends AppCompatActivity {
     public static Fragment fragment = null;
     AHBottomNavigationItem item2;
@@ -47,14 +53,15 @@ public class MainActivity extends AppCompatActivity {
     private LinearLayout linearPay;
     private PrefManager prefManager;
     SearchView mSearchView;
-    private Boolean isConnected;
+    private FoodViewModel viewModel;
+    private MenuItem itemFilter;
 
     void initConnectivityListener() {
         ReactiveNetwork.observeInternetConnectivity()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(isConnectedToInternet -> {
-                    Constants.setConnected(isConnected);
+                    Constants.setConnected(isConnectedToInternet);
 
 
                 });
@@ -62,7 +69,7 @@ public class MainActivity extends AppCompatActivity {
     private void setUpDrawer(Toolbar toolbar) {
 
         ImageView imageView = findViewById(R.id.resideShow);
-        imageView.setVisibility(View.GONE);
+        imageView.setVisibility(GONE);
         DrawerClass.Companion.getDrawer("That taste", "Food Movers", MainActivity.this, toolbar, new DrawerItemListener() {
             @Override
             public void logOutClicked() {
@@ -127,6 +134,8 @@ public class MainActivity extends AppCompatActivity {
         getMenuInflater().inflate(R.menu.menu_main, menu);
 
         MenuItem mSearch = menu.findItem(R.id.action_search);
+        itemFilter = menu.findItem(R.id.action_filter);
+
         SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
 
         mSearchView = (SearchView) mSearch.getActionView();
@@ -139,6 +148,19 @@ public class MainActivity extends AppCompatActivity {
         searchAutoComplete.setHintTextColor(Color.BLACK);
         searchAutoComplete.setTextColor(Color.BLACK);
         mSearchView.setBackgroundColor(this.getResources().getColor(R.color.transparent));
+        //mSearchView.setBackground(this.getResources().getDrawable(R.drawable.rounded_border_tv));
+
+        int searchPlateId = mSearchView.getContext().getResources().getIdentifier("android:id/search_plate", null, null);
+        View searchPlate = mSearchView.findViewById(searchPlateId);
+        if (searchPlate != null) {
+            searchPlate.setBackgroundColor(Color.DKGRAY);
+            int searchTextId = searchPlate.getContext().getResources().getIdentifier("android:id/search_src_text", null, null);
+            TextView searchText = searchPlate.findViewById(searchTextId);
+            if (searchText != null) {
+                searchText.setTextColor(Color.WHITE);
+                searchText.setHintTextColor(Color.WHITE);
+            }
+        }
 
         return true;
     }
@@ -151,6 +173,16 @@ public class MainActivity extends AppCompatActivity {
         int id = item.getItemId();
 
 
+        switch (id) {
+            case R.id.action_filter:
+
+
+                break;
+
+
+        }
+
+
         return super.onOptionsItemSelected(item);
     }
 
@@ -161,6 +193,17 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         prefManager = new PrefManager(MainActivity.this);
+        viewModel = ViewModelProviders.of(this).get(FoodViewModel.class);
+
+        viewModel.insertCategory(DataGen.generateCategory());
+        viewModel.insertDepartment(DataGen.generateDepartment());
+        viewModel.insertRestaurant(DataGen.generateRestaurant());
+        viewModel.insertFood(DataGen.generateFoods());
+
+
+
+
+
 
         setUpDrawer(toolbar);
         bottomNav();
@@ -210,10 +253,19 @@ public class MainActivity extends AppCompatActivity {
         } catch (Exception nm) {
             nm.printStackTrace();
         }
+
+        viewModel.getCartCount().observe(this, integer -> {
+            if (integer > 0) {
+
+                bottomNavigation.setNotification(String.valueOf(integer), 1);
+            } else {
+                bottomNavigation.setNotification("", 1);
+            }
+        });
     }
 
 
-    public void setSearchVisibility(int visibility) {
+    public void setSearchVisibility(int visibility, boolean vis) {
 //        imagePay.setVisibility(visibility);
 //        linearPay.setVisibility(visibility);
 
@@ -239,7 +291,12 @@ public class MainActivity extends AppCompatActivity {
 //                .playOn(findViewById(R.id.txt_pay));
 
         if (mSearchView != null) {
+
             mSearchView.setVisibility(visibility);
+        }
+        if (itemFilter != null) {
+
+            itemFilter.setVisible(vis);
         }
 
     }
@@ -302,7 +359,7 @@ public class MainActivity extends AppCompatActivity {
         bottomNavigation.addItem(item2);
         bottomNavigation.addItem(item3);
         bottomNavigation.setDefaultBackgroundColor(Color.parseColor("#209fdf"));
-        bottomNavigation.setBehaviorTranslationEnabled(true);
+        bottomNavigation.setBehaviorTranslationEnabled(false);
         bottomNavigation.setInactiveColor(Color.parseColor("#FFFFFF"));
         bottomNavigation.setForceTint(true);
         bottomNavigation.setCurrentItem(0);
@@ -341,6 +398,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onPositionChange(int y) {
                 // Manage the new y position
+
+
             }
         });
 

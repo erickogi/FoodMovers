@@ -14,6 +14,12 @@ public class CategoriesModel {
     private String code;
     private String name;
 
+    public CategoriesModel(int id, String code, String name) {
+        this.id = id;
+        this.code = code;
+        this.name = name;
+    }
+
     public int getId() {
         return id;
     }

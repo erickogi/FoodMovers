@@ -13,7 +13,7 @@ import java.lang.ref.WeakReference;
 
 public class FoodViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
     public TextView txtName, txtType, txtDesc, txtPriceOne, txtPriceTwo, txtAddToCart;
-    public ImageView imgFood;
+    public ImageView imgFood, imgBck;
     public View cancelPriceOneView;
     private WeakReference<OnclickRecyclerListener> listenerWeakReference;
 
@@ -26,6 +26,8 @@ public class FoodViewHolder extends RecyclerView.ViewHolder implements View.OnCl
 
         cancelPriceOneView = itemView.findViewById(R.id.view_cancel);
         imgFood = itemView.findViewById(R.id.img_food);
+        imgBck = itemView.findViewById(R.id.img_bck);
+        imgBck.setOnClickListener(this);
         imgFood.setOnClickListener(this);
         txtName = itemView.findViewById(R.id.txt_name);
         txtType = itemView.findViewById(R.id.txt_type);

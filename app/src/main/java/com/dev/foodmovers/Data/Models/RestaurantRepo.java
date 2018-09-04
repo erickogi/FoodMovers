@@ -42,7 +42,7 @@ public class RestaurantRepo {
                             JsonArray jsonArray = gson.toJsonTree(responseModel.getData()).getAsJsonArray();
                             Type listType = new TypeToken<LinkedList<RestaurantsModel>>() {
                             }.getType();
-                            insert(gson.fromJson(jsonArray, listType));
+                            insert((List<RestaurantsModel>) gson.fromJson(jsonArray, listType));
 
 
                         }
@@ -52,7 +52,7 @@ public class RestaurantRepo {
                             JsonArray jsonArray = gson.toJsonTree(responseModel.getData()).getAsJsonArray();
                             Type listType = new TypeToken<LinkedList<RestaurantsModel>>() {
                             }.getType();
-                            insert(gson.fromJson(jsonArray, listType));
+                            insert((List<RestaurantsModel>) gson.fromJson(jsonArray, listType));
 
                         }
                     }
@@ -69,6 +69,13 @@ public class RestaurantRepo {
 
         new insertAsyncTask(daao).execute(restaurantsModels);
     }
+
+    public void insert(RestaurantsModel restaurantsModels) {
+        daao = db.restaurantsDao();
+
+        new insertAsyncSingleTask(daao).execute(restaurantsModels);
+    }
+
 
     public LiveData<RestaurantsModel> getLast() {
         return db.restaurantsDao().getLastRestaurants();

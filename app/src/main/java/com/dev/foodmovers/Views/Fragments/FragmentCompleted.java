@@ -36,7 +36,7 @@ public class FragmentCompleted extends Fragment {
         AppBarLayout appBarLayout = getActivity().findViewById(R.id.app_bar);
         appBarLayout.setExpanded(false);
         try {
-            ((MainActivity) getActivity()).setSearchVisibility(View.VISIBLE);
+            ((MainActivity) getActivity()).setSearchVisibility(View.VISIBLE, false);
         } catch (Exception nm) {
             nm.printStackTrace();
         }

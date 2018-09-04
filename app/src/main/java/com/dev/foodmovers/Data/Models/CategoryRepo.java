@@ -42,7 +42,7 @@ public class CategoryRepo {
                             JsonArray jsonArray = gson.toJsonTree(responseModel.getData()).getAsJsonArray();
                             Type listType = new TypeToken<LinkedList<CategoriesModel>>() {
                             }.getType();
-                            insert(gson.fromJson(jsonArray, listType));
+                            insert((List<CategoriesModel>) gson.fromJson(jsonArray, listType));
 
 
                         }
@@ -52,7 +52,7 @@ public class CategoryRepo {
                             JsonArray jsonArray = gson.toJsonTree(responseModel.getData()).getAsJsonArray();
                             Type listType = new TypeToken<LinkedList<CategoriesModel>>() {
                             }.getType();
-                            insert(gson.fromJson(jsonArray, listType));
+                            insert((List<CategoriesModel>) gson.fromJson(jsonArray, listType));
 
                         }
                     }
@@ -68,6 +68,12 @@ public class CategoryRepo {
         daao = db.categoriesDao();
 
         new insertAsyncTask(daao).execute(foodModels);
+    }
+
+    public void insert(CategoriesModel foodModels) {
+        daao = db.categoriesDao();
+
+        new insertAsyncSingleTask(daao).execute(foodModels);
     }
 
     public LiveData<CategoriesModel> getLastFood() {

@@ -46,7 +46,7 @@ public interface FoodOrderDao {
     LiveData<List<FoodOrderModel>> searchByFoodOrderByDateTime(String datetime);
 
     @Query("SELECT COUNT(code) FROM FOODORDERMODEL ")
-    int getNumberOfRows(int av);
+    int getNumberOfRows();
 
     @Update
     void updateRecord(FoodOrderModel foodModel);

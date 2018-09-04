@@ -21,7 +21,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class DepartmentRepo {
-    private CategoriesDao daao;
+    private DepartmentsDao daao;
 
     private FMDatabase db;
     private Gson gson;
@@ -29,20 +29,20 @@ public class DepartmentRepo {
 
     public DepartmentRepo(Application application) {
         db = FMDatabase.getDatabase(application);
-        daao = db.categoriesDao();
+        daao = db.departmentsDao();
     }
 
 
-    public LiveData<List<CategoriesModel>> fetchAllData(boolean isOnline, @Nullable String url, @Nullable JSONObject jsonObject) {
+    public LiveData<List<DepartmentsModel>> fetchAllData(boolean isOnline, @Nullable String url, @Nullable JSONObject jsonObject) {
 
         if (isOnline) {
             Request.Companion.getResponse(url, jsonObject, "", new ResponseCallback() {
                         @Override
                         public void response(ResponseModel responseModel) {
                             JsonArray jsonArray = gson.toJsonTree(responseModel.getData()).getAsJsonArray();
-                            Type listType = new TypeToken<LinkedList<CategoriesModel>>() {
+                            Type listType = new TypeToken<LinkedList<DepartmentsModel>>() {
                             }.getType();
-                            insert(gson.fromJson(jsonArray, listType));
+                            insert((List<DepartmentsModel>) gson.fromJson(jsonArray, listType));
 
 
                         }
@@ -50,9 +50,9 @@ public class DepartmentRepo {
                         @Override
                         public void response(ResponseObject responseModel) {
                             JsonArray jsonArray = gson.toJsonTree(responseModel.getData()).getAsJsonArray();
-                            Type listType = new TypeToken<LinkedList<CategoriesModel>>() {
+                            Type listType = new TypeToken<LinkedList<DepartmentsModel>>() {
                             }.getType();
-                            insert(gson.fromJson(jsonArray, listType));
+                            insert((List<DepartmentsModel>) gson.fromJson(jsonArray, listType));
 
                         }
                     }
@@ -64,42 +64,48 @@ public class DepartmentRepo {
     }
 
 
-    public void insert(List<CategoriesModel> foodModels) {
-        daao = db.categoriesDao();
+    public void insert(List<DepartmentsModel> foodModels) {
+        daao = db.departmentsDao();
 
         new insertAsyncTask(daao).execute(foodModels);
     }
 
-    public LiveData<CategoriesModel> getLastFood() {
-        return db.categoriesDao().getLastCategories();
+    public void insert(DepartmentsModel foodModels) {
+        daao = db.departmentsDao();
+
+        new insertAsyncSingleTask(daao).execute(foodModels);
     }
 
-    public LiveData<List<CategoriesModel>> searchByName(String name) {
-        return db.categoriesDao().searchbyName(name);
-
+    public LiveData<DepartmentsModel> getLastFood() {
+        return db.departmentsDao().getLastDepartments();
     }
 
-    public void delete(CategoriesModel model) {
-        new deleteAsyncTask(db.categoriesDao()).execute(model);
-
-    }
-
-    public void update(CategoriesModel model) {
-        new updateAsyncTask(db.categoriesDao()).execute(model);
+    public LiveData<List<DepartmentsModel>> searchByName(String name) {
+        return db.departmentsDao().searchbyName(name);
 
     }
 
-    private static class insertAsyncTask extends AsyncTask<List<CategoriesModel>, Void, Boolean> {
+    public void delete(DepartmentsModel model) {
+        new deleteAsyncTask(db.departmentsDao()).execute(model);
 
-        private CategoriesDao mAsyncTaskDao;
+    }
 
-        insertAsyncTask(CategoriesDao dao) {
+    public void update(DepartmentsModel model) {
+        new updateAsyncTask(db.departmentsDao()).execute(model);
+
+    }
+
+    private static class insertAsyncTask extends AsyncTask<List<DepartmentsModel>, Void, Boolean> {
+
+        private DepartmentsDao mAsyncTaskDao;
+
+        insertAsyncTask(DepartmentsDao dao) {
             mAsyncTaskDao = dao;
         }
 
         @Override
-        protected Boolean doInBackground(final List<CategoriesModel>... params) {
-            mAsyncTaskDao.insertMultipleCategories(params[0]);
+        protected Boolean doInBackground(final List<DepartmentsModel>... params) {
+            mAsyncTaskDao.insertMultipleDepartments(params[0]);
             return true;
 
         }
@@ -112,17 +118,17 @@ public class DepartmentRepo {
         }
     }
 
-    private static class insertAsyncSingleTask extends AsyncTask<CategoriesModel, Void, Boolean> {
+    private static class insertAsyncSingleTask extends AsyncTask<DepartmentsModel, Void, Boolean> {
 
-        private CategoriesDao mAsyncTaskDao;
+        private DepartmentsDao mAsyncTaskDao;
 
-        insertAsyncSingleTask(CategoriesDao dao) {
+        insertAsyncSingleTask(DepartmentsDao dao) {
             mAsyncTaskDao = dao;
         }
 
         @Override
-        protected Boolean doInBackground(final CategoriesModel... params) {
-            mAsyncTaskDao.insertSingleCategories(params[0]);
+        protected Boolean doInBackground(final DepartmentsModel... params) {
+            mAsyncTaskDao.insertSingleDepartments(params[0]);
             return true;
 
         }
@@ -135,16 +141,16 @@ public class DepartmentRepo {
         }
     }
 
-    private static class updateAsyncTask extends AsyncTask<CategoriesModel, Void, Boolean> {
+    private static class updateAsyncTask extends AsyncTask<DepartmentsModel, Void, Boolean> {
 
-        private CategoriesDao mAsyncTaskDao;
+        private DepartmentsDao mAsyncTaskDao;
 
-        updateAsyncTask(CategoriesDao dao) {
+        updateAsyncTask(DepartmentsDao dao) {
             mAsyncTaskDao = dao;
         }
 
         @Override
-        protected Boolean doInBackground(final CategoriesModel... params) {
+        protected Boolean doInBackground(final DepartmentsModel... params) {
             mAsyncTaskDao.updateRecord(params[0]);
             return true;
 
@@ -158,16 +164,16 @@ public class DepartmentRepo {
         }
     }
 
-    private static class deleteAsyncTask extends AsyncTask<CategoriesModel, Void, Boolean> {
+    private static class deleteAsyncTask extends AsyncTask<DepartmentsModel, Void, Boolean> {
 
-        private CategoriesDao mAsyncTaskDao;
+        private DepartmentsDao mAsyncTaskDao;
 
-        deleteAsyncTask(CategoriesDao dao) {
+        deleteAsyncTask(DepartmentsDao dao) {
             mAsyncTaskDao = dao;
         }
 
         @Override
-        protected Boolean doInBackground(final CategoriesModel... params) {
+        protected Boolean doInBackground(final DepartmentsModel... params) {
             mAsyncTaskDao.deleteRecord(params[0]);
             return true;
 

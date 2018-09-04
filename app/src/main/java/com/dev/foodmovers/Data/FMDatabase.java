@@ -18,7 +18,7 @@ import com.dev.foodmovers.Data.Models.FoodOrderModel;
 import com.dev.foodmovers.Data.Models.RestaurantsDao;
 import com.dev.foodmovers.Data.Models.RestaurantsModel;
 
-@Database(entities = {FoodModel.class, FoodCartModel.class, FoodOrderModel.class, CategoriesModel.class, DepartmentsModel.class, RestaurantsModel.class}, version = 1)
+@Database(entities = {FoodModel.class, FoodCartModel.class, FoodOrderModel.class, CategoriesModel.class, DepartmentsModel.class, RestaurantsModel.class}, version = 2)
 
 public abstract class FMDatabase extends RoomDatabase {
 

@@ -67,6 +67,11 @@ public class FoodListAdapter extends RecyclerView.Adapter<FoodViewHolder> {
                 .apply(options)
                 .into(holder.imgFood);
 
+        Glide.with(context)
+                .load(model.getImage())
+                .apply(options)
+                .into(holder.imgBck);
+
 
     }
 
@@ -79,5 +84,6 @@ public class FoodListAdapter extends RecyclerView.Adapter<FoodViewHolder> {
     public void refresh(List<FoodModel> foodModels) {
         modelList = foodModels;
         notifyDataSetChanged();
+
     }
 }

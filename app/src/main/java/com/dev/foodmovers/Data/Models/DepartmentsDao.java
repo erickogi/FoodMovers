@@ -40,7 +40,7 @@ public interface DepartmentsDao {
 
 
     @Query("SELECT COUNT(code) FROM department ")
-    int getNumberOfRows(int av);
+    int getNumberOfRows();
 
     @Update
     void updateRecord(DepartmentsModel department);

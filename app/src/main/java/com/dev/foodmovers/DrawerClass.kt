@@ -77,7 +77,7 @@ class DrawerClass {
 
 
                     )
-                    .withOnAccountHeaderListener { view, profile, currentProfile -> false }
+                    //.withOnAccountHeaderListener { view, profile, currentProfile -> false }
                     .build()
 
 
